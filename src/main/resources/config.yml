@@ -1,0 +1,31 @@
+# HerobrineAI Configuration File
+# Configuração do Plugin de Terror da IA do Herobrine
+
+ai-enabled: true
+check-interval-seconds: 15
+
+spawn-protection-radius: 100
+
+events:
+  replace-torches: true
+  toggle-doors: true
+  creepy-sounds: true
+  mobs-stare: true
+  lightning-strike: true
+
+structures:
+  pyramids: true
+  tunnels: true
+  leafless-forests: true
+  sanctuaries: true
+  dungeons: true
+  cobble-pillars: true
+  signs: true
+
+signs-messages:
+  - "Estou observando você..."
+  - "Não olhe para trás"
+  - "Você não deveria estar aqui"
+  - "EU VEJO VOCÊ"
+  - "Fugir é inútil"
+  - "Você voltou..."
