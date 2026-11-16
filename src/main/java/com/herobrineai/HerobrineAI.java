@@ -4,13 +4,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class HerobrineAI extends JavaPlugin {
+public class HerobrineAI extends JavaPlugin {
 
     private static HerobrineAI instance;
     private PlayerMemory playerMemory;
     private MysteriousStructures mysteriousStructures;
     private ScaryEvents scaryEvents;
     private HerobrineBehavior behaviorManager;
+    private HerobrineNpc npcManager;
+    private PossessedMobs possessedMobs;
     private boolean aiEnabled = true;
 
     @Override
@@ -18,39 +20,54 @@ public final class HerobrineAI extends JavaPlugin {
         instance = this;
         saveDefaultConfig();
 
-        // Inicializa sistemas
+        this.aiEnabled = getConfig().getBoolean("ai.enabled", true);
+
+        // Inicializar Sistemas
         this.playerMemory = new PlayerMemory(this);
         this.mysteriousStructures = new MysteriousStructures(this);
         this.scaryEvents = new ScaryEvents(this);
+        this.npcManager = new HerobrineNpc(this);
         this.behaviorManager = new HerobrineBehavior(this);
+        this.possessedMobs = new PossessedMobs(this);
 
-        // Registra Eventos
+        // Registrar Eventos e Comandos
         getServer().getPluginManager().registerEvents(new HerobrineListener(this, playerMemory, behaviorManager), this);
-
-        // Registra Comandos
+        
         if (getCommand("herobrine") != null) {
             getCommand("herobrine").setExecutor(new HerobrineCommand(this, playerMemory, scaryEvents, mysteriousStructures));
         }
 
-        // Inicia Loop de Comportamento da IA
-        behaviorManager.startBehaviorLoop();
-
-        getLogger().info(ChatColor.DARK_RED + "========================================");
-        getLogger().info(ChatColor.DARK_RED + "   HerobrineAI ATIVADO com sucesso!");
-        getLogger().info(ChatColor.DARK_RED + "   Skin Clássica e IA Comportamental Prontas.");
-        getLogger().info(ChatColor.DARK_RED + "========================================");
+        getLogger().info("========================================");
+        getLogger().info("  HerobrineAI (v1.0.0) ATIVADO COM SUCESSO ");
+        getLogger().info("  Lenda, IA Adaptativa e Mobs Possuídos  ");
+        getLogger().info("========================================");
     }
 
     @Override
     public void onDisable() {
-        if (playerMemory != null) {
-            playerMemory.saveAll();
+        if (npcManager != null) {
+            npcManager.removeAll();
         }
-        getLogger().info("HerobrineAI desativado. Memórias salvas.");
+        getLogger().info("HerobrineAI foi desativado. Ele continua observando nas sombras...");
     }
 
     public static HerobrineAI getInstance() {
         return instance;
+    }
+
+    public boolean isAiEnabled() {
+        return aiEnabled;
+    }
+
+    public void setAiEnabled(boolean aiEnabled) {
+        this.aiEnabled = aiEnabled;
+        getConfig().set("ai.enabled", aiEnabled);
+        saveConfig();
+    }
+
+    public void reloadPluginConfig() {
+        reloadConfig();
+        this.aiEnabled = getConfig().getBoolean("ai.enabled", true);
     }
 
     public PlayerMemory getPlayerMemory() {
@@ -69,15 +86,11 @@ public final class HerobrineAI extends JavaPlugin {
         return behaviorManager;
     }
 
-    public boolean isAiEnabled() {
-        return aiEnabled;
+    public HerobrineNpc getNpcManager() {
+        return npcManager;
     }
 
-    public void setAiEnabled(boolean aiEnabled) {
-        this.aiEnabled = aiEnabled;
-    }
-
-    public void reloadPluginConfig() {
-        reloadConfig();
+    public PossessedMobs getPossessedMobs() {
+        return possessedMobs;
     }
 }
